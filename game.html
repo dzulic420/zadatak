@@ -1,0 +1,128 @@
+<script>
+  var width = 400;
+  var visina = 400;
+  var g = ca(visina);
+  const polje = [...Array(400).keys()];
+  polje.forEach(function (i) {
+    g[i] = [];
+  });
+  var m = ca(visina);
+
+  for (var sirina1 = 0; sirina1 < width; sirina1++) {
+    for (var visina1 = 0; visina1 < visina; visina1++) {
+      var r = Math.random();
+      var ra = r * 2;
+      var rb = Math.floor(ra);
+      if (rb === 1) {
+        g[sirina1][visina1] = 1;
+      } else {
+        g[sirina1][visina1] = 0;
+      }
+    }
+  }
+  let boje = {
+    1: "#FF0000",
+    0: "#FFFFFF",
+  };
+  function prikaz() {
+    var c = document.getElementById("myCanvas");
+    var ctx = c.getContext("2d");
+    ctx.clearRect(0, 0, 400, 400);
+    for (var sirina1 = 1; sirina1 < width; sirina1++) {
+      for (var visina1 = 1; visina1 < visina; visina1++) {
+        if (g[sirina1][visina1] === 1) {
+          ctx.fillStyle = boje[g[sirina1][visina1]];
+          ctx.fillStyle = "#FF0000";
+          ctx.fillRect(sirina1, visina1, 1, 1);
+        }
+      }
+    }
+    animation();
+    requestAnimationFrame(prikaz);
+  }
+
+  function ca(r_y) {
+    var arr = [];
+    for (var i = 0; i < r_y; i++) {
+      arr[i] = [];
+    }
+    return arr;
+  }
+
+  function animation() {
+    for (var sirina1 = 1; sirina1 < width - 1; sirina1++) {
+      for (var visina1 = 1; visina1 < visina - 1; visina1++) {
+        if (g[sirina1][visina1] === 0) {
+          switch (
+            g[sirina1 - 1][visina1 - 1] +
+            g[sirina1 - 1][visina1] +
+            g[sirina1 - 1][visina1 + 1] +
+            g[sirina1][visina1 - 1] +
+            g[sirina1][visina1 + 1] +
+            g[sirina1 + 1][visina1 - 1] +
+            g[sirina1 + 1][visina1] +
+            g[sirina1 + 1][visina1 + 1]
+          ) {
+            case 1:
+            case 2:
+              m[sirina1][visina1] = 0;
+              break;
+            case 3:
+              m[sirina1][visina1] = 1;
+              break;
+            case 4:
+              m[sirina1][visina1] = 1;
+            case 5:
+              m[sirina1][visina1] = !(
+                m[sirina1][visina1] | !m[sirina1][visina1]
+              );
+            default:
+              m[sirina1][visina1] = 0;
+          }
+        } else if (g[sirina1][visina1] === 1) {
+          switch (
+            g[sirina1 - 1][visina1 - 1] +
+            g[sirina1 - 1][visina1] +
+            g[sirina1 - 1][visina1 + 1] +
+            g[sirina1][visina1 - 1] +
+            g[sirina1][visina1 + 1] +
+            g[sirina1 + 1][visina1 - 1] +
+            g[sirina1 + 1][visina1] +
+            g[sirina1 + 1][visina1 + 1]
+          ) {
+            case 0:
+            case 1:
+              m[sirina1][visina1] = m[sirina1][visina1] | !m[sirina1][visina1];
+              break;
+            case 2:
+              m[sirina1][visina1] = m[sirina1][visina1] | !m[sirina1][visina1];
+            case 3:
+              m[sirina1][visina1] = 1;
+              break;
+            case 4:
+            case 5:
+              m[sirina1][visina1] = m[sirina1][visina1] & !m[sirina1][visina1];
+            case 6:
+            case 7:
+            case 8:
+              m[sirina1][visina1] = 0;
+              break;
+            default:
+              m[sirina1][visina1] = 0;
+          }
+        }
+      }
+    }
+
+    for (var sirina1 = 0; sirina1 < width; sirina1++) {
+      for (var visina1 = 0; visina1 < visina; visina1++) {
+        g[sirina1][visina1] = m[sirina1][visina1];
+      }
+    }
+  }
+</script>
+<html>
+  <body onload="prikaz()">
+    <canvas id="myCanvas" width="400" height="400"></canvas>
+  </body>
+</html>
